@@ -1,0 +1,13 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-etherscan": "^2.1.4",
+    "ethers": "^5.4.4",
+    "hardhat": "^2.5.0",
+    "hardhat-spdx-license-identifier": "^2.0.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.2.0"
+  }
+}
