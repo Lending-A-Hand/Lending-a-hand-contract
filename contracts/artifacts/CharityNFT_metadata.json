@@ -16,11 +16,6 @@
 						"internalType": "string",
 						"name": "symbol_",
 						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "adjustZero_",
-						"type": "uint256"
 					}
 				],
 				"stateMutability": "nonpayable",
@@ -103,12 +98,6 @@
 						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "poolBalance",
-						"type": "uint256"
 					}
 				],
 				"name": "TokenBurn",
@@ -138,6 +127,19 @@
 				],
 				"name": "Transfer",
 				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "accept",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			},
 			{
 				"inputs": [
@@ -185,7 +187,13 @@
 					}
 				],
 				"name": "burn",
-				"outputs": [],
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -417,6 +425,25 @@
 						"type": "uint256"
 					}
 				],
+				"name": "tokenStatus",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
 				"name": "tokenURI",
 				"outputs": [
 					{
@@ -630,11 +657,11 @@
 			]
 		},
 		"contracts/CharityNFT.sol": {
-			"keccak256": "0x883b3f74dd4e10a880f63f15df84e6b2f4178b8d6b2290ac75aa20557fc3cdc9",
+			"keccak256": "0xd509cc8a0765885266cd90939384a8da3979dff4dfdc59eb5c6dbc6e9b42ad35",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://2b1202e9d05c4accce3c8935e339befcb91f3da287eb8989a08131ec28a0cc68",
-				"dweb:/ipfs/Qmcz6J9fkMDVHUL2zbZ6obALUoH5rUf2Zyxa6RKrm1cSrb"
+				"bzz-raw://9e24a5342fa4337f0362d28fd6e628d63b027d68d02d463c0eea787eead8f780",
+				"dweb:/ipfs/QmP3Hr7PQ3sSvz2qNqoSQ8U77e6CJuJ3EVatN5QTWdzL6t"
 			]
 		}
 	},

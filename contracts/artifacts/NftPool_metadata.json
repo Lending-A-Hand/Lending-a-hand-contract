@@ -81,12 +81,17 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "receipient",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
 					}
 				],
-				"name": "acceptNFT",
+				"name": "acceptNft",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -94,9 +99,9 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "poolId",
-						"type": "uint256"
+						"internalType": "address",
+						"name": "receipient",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256[]",
@@ -124,7 +129,72 @@
 			},
 			{
 				"inputs": [],
-				"name": "indexGap",
+				"name": "getPoolCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "receipient",
+						"type": "address"
+					}
+				],
+				"name": "getPoolStat",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "receipient",
+						"type": "address"
+					}
+				],
+				"name": "getPoolToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getTokenReject",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -143,8 +213,13 @@
 						"type": "address"
 					},
 					{
+						"internalType": "address",
+						"name": "underlyingAsset",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256[]",
-						"name": "_threshold",
+						"name": "threshold",
 						"type": "uint256[]"
 					}
 				],
@@ -167,38 +242,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "poolCount",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "poolIndex",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -214,35 +257,6 @@
 				"name": "poolMintToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"name": "poolStat",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "curTokenId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "pendingTokenCount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "acceptTokenCount",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -272,12 +286,54 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "receipient",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "nftTokenAddress",
+						"type": "address"
+					}
+				],
+				"name": "registerERC721",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "registered",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "receipient",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
 					}
 				],
-				"name": "rejectNFT",
+				"name": "rejectNft",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -287,6 +343,25 @@
 				"name": "renounceOwnership",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "showPoolNfts",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -428,20 +503,36 @@
 				"dweb:/ipfs/QmcsVgLgzWdor3UnAztUkXKNGcysm1MPneWksF72AvnwBx"
 			]
 		},
-		"contracts/CharityNFT.sol": {
-			"keccak256": "0xe5b80502ce5e8c6a15b95f20255b8528c89d52b60297d9d6a4b3df73f30b5e1e",
+		"@openzeppelin/contracts/utils/structs/EnumerableMap.sol": {
+			"keccak256": "0xc1b966eb28b972bae1d366d8ef0b3133eea869cfc65b8b4c90c389fcd67a8085",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://659c08eb3d0a76c75f5b904ea3cbce8fb756bec4ee8ad16a9c00cff665c7fa75",
-				"dweb:/ipfs/Qmb1UvURZAa1E5evUW52xuZbgpGdYYGmNJYPVRPqCju9Cv"
+				"bzz-raw://9027de350f6b3afd592c3ec1fedd304e6cef8d254cb0b7bb635c4e213eef3c03",
+				"dweb:/ipfs/QmZdVmPApuSuXzRvpSfWRYnJhSNDyfEPdG3PpeHRXbEGf2"
+			]
+		},
+		"@openzeppelin/contracts/utils/structs/EnumerableSet.sol": {
+			"keccak256": "0x211639753e28bdca7f98618f51dca3dcd08a88b57c45050eb05fa4d0053327c3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4270d35fb4493275ceba45f1cce2d6486b0886f594f0ca6434077523844ff902",
+				"dweb:/ipfs/QmWqApTqnSKhTabGCAXocAF7ovstW4divjaoM1LPYHrLqY"
+			]
+		},
+		"contracts/CharityNFT.sol": {
+			"keccak256": "0xd509cc8a0765885266cd90939384a8da3979dff4dfdc59eb5c6dbc6e9b42ad35",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9e24a5342fa4337f0362d28fd6e628d63b027d68d02d463c0eea787eead8f780",
+				"dweb:/ipfs/QmP3Hr7PQ3sSvz2qNqoSQ8U77e6CJuJ3EVatN5QTWdzL6t"
 			]
 		},
 		"contracts/NftPool.sol": {
-			"keccak256": "0x7ae82545936df0e4c09591c4ad27abd6621ef26d2ac8457dce56a5bede9940f7",
+			"keccak256": "0x63e4754bf864b9c84a177180c45c19ccdc732ef24ee5f7f1d2e655fd3194e185",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://aee925b73e8dba8025809aec927a100c16052faf0c45f1043162d220872af6ed",
-				"dweb:/ipfs/QmVSe16FAztvyJVfdVFUDyW8yphq6gbQumrcAEQKAMNd2R"
+				"bzz-raw://953a1eab0121c36d3aed7e451c74f264b387e808b53e68140517b2fb05200c0a",
+				"dweb:/ipfs/QmZvvFJbrjEt8U3pTq4iRW9vwtVuFHyhEShhWimbS7kuzN"
 			]
 		}
 	},

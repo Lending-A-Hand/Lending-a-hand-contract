@@ -6,17 +6,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CharityNFT is ERC721, Ownable{
-
-    uint256 private adjustZero;
     
-    constructor (string memory name_, string memory symbol_, uint256 adjustZero_) ERC721(name_, symbol_) {
-        adjustZero = adjustZero_;
-    }
+    enum nftStatus { pending, accept}
+    
+    constructor (string memory name_, string memory symbol_) ERC721(name_, symbol_) {}
     
     mapping(uint256 => string)  private _tokenURIs;
-    mapping(uint256 => uint256) private _poolTokenCount;
+    mapping(uint256 => nftStatus) private _tokenStatus;
     
-    event TokenBurn(uint256 tokenId, uint256 poolBalance);
+    event TokenBurn(uint256 tokenId);
     
     /***********************************|
     |           Mint function           |
@@ -24,26 +22,25 @@ contract CharityNFT is ERC721, Ownable{
     
     function mint(uint256 tokenId, string memory uri) external returns (bool) {
         _mint(msg.sender, tokenId);
-        uint256 temp = tokenId / adjustZero;
-        require(temp > 0, "CharityNFT: tokenId invalid");
-        _poolTokenCount[temp] += 1;
+        require(tokenId > 0, "CharityNFT: tokenId invalid");
         _tokenURIs[tokenId] = uri;
-        
+        _tokenStatus[tokenId] = nftStatus.pending;
         return true;
     }
-    
+
     function burn(uint256 tokenId) external returns (bool) {
         _burn(tokenId);
-        uint256 temp = tokenId / adjustZero;
-        require(temp > 0, "CharityNFT: tokenId invalid");
-        _poolTokenCount[temp] -= 1;
+        require(tokenId > 0, "CharityNFT: tokenId invalid");
+        _tokenStatus[tokenId] = nftStatus.pending;
         if (bytes(_tokenURIs[tokenId]).length != 0) {
             delete _tokenURIs[tokenId];
         }
-    
-        emit TokenBurn(tokenId, _poolTokenCount[temp]);
-
+        emit TokenBurn(tokenId);
         return true;
+    }
+    
+    function accept(uint256 tokenId) external {
+        _tokenStatus[tokenId] = nftStatus.accept;
     }
 
     /***********************************|
@@ -75,6 +72,12 @@ contract CharityNFT is ERC721, Ownable{
     
     function _baseURI() internal pure override returns (string memory) {
         return "https://api.jsonbin.io/b/";
+    }
+    
+    function tokenStatus(uint256 tokenId) external view returns (bool) {
+        if (_tokenStatus[tokenId] == nftStatus.accept)
+            return true;
+        return false;
     }
     /// https://api.jsonbin.io/b/6110fc75e1b0604017a9f471
     /// https://api.jsonbin.io/b/6110e47953ca131484a3471d

@@ -8,30 +8,35 @@
 			{
 				"inputs": [
 					{
-						"internalType": "string",
-						"name": "test",
-						"type": "string"
+						"internalType": "uint256",
+						"name": "idx",
+						"type": "uint256"
 					}
 				],
-				"name": "abc",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
+				"name": "deleteByIndex",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "sweet",
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "poolId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "target",
+						"type": "uint256"
+					}
+				],
+				"name": "findByNumber",
 				"outputs": [
 					{
-						"internalType": "string",
+						"internalType": "uint256",
 						"name": "",
-						"type": "string"
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -41,16 +46,16 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "tokenId",
+						"name": "",
 						"type": "uint256"
 					}
 				],
-				"name": "tokenURI",
+				"name": "testF",
 				"outputs": [
 					{
-						"internalType": "string",
+						"internalType": "uint256",
 						"name": "",
-						"type": "string"
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -70,7 +75,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/test.sol": "Test"
+			"contracts/test.sol": "test"
 		},
 		"evmVersion": "istanbul",
 		"libraries": {},
@@ -85,10 +90,10 @@
 	},
 	"sources": {
 		"contracts/test.sol": {
-			"keccak256": "0xaf7693640b7acc8a6d3d6ff05845f78c2fa04937754a8cd4a09b8803a4fba301",
+			"keccak256": "0x7a9a7f9a2fb965e8b7b9aff464a1162e734e37e03aeb039a16a7104441e71756",
 			"urls": [
-				"bzz-raw://6a2317c91b48d5a02d97e2ac0010328304efdf299509197c0c64fef199b119fa",
-				"dweb:/ipfs/QmXb34b17WfhfwQZBekzDDAh8xuGugt31JzDnbuUApJW4C"
+				"bzz-raw://768aaec7d9de8640f05877e1aaf587d20311e1a470d24f4dd16309d56bbdbfc8",
+				"dweb:/ipfs/QmP7s4x74DShenP3aetgA9YqsehvvJezuQGbUGzEoYwZLq"
 			]
 		}
 	},
