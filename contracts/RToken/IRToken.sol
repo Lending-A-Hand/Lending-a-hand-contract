@@ -1,49 +1,22 @@
-pragma solidity 0.8.6;
+pragma solidity ^0.8.0;
 
-import "../RToken/RTokenStructs.sol";
-import "./IAllocationStrategy.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {RTokenStructs} from "./RTokenStructs.sol";
+import {IAllocationStrategy} from "./IAllocationStrategy.sol";
+import {IERC20} from "./IERC20.sol";
 
-abstract contract IRToken is RTokenStructs, IERC20 {
-    ////////////////////////////////////////////////////////////////////////////
-    // Token details
-    ////////////////////////////////////////////////////////////////////////////
-
-    /// @notice Returning the underlying token
-    function token() external virtual returns (IERC20);
-
-    /**
-     * @notice Returns the name of the token.
-     */
-    function name() external virtual view returns (string memory);
-
-    /**
-     * @notice Returns the symbol of the token, usually a shorter version of the
-     * name.
-     */
-    function symbol() external virtual view returns (string memory);
-
-    /**
-     * @notice Returns the number of decimals used to get its user representation.
-     * For example, if `decimals` equals `2`, a balance of `505` tokens should
-     * be displayed to a user as `5,05` (`505 / 10 ** 2`).
-     *
-     * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei.
-     *
-     * NOTE: This information is only used for _display_ purposes: it in
-     * no way affects any of the arithmetic of the contract, including
-     * {IERC20-balanceOf} and {IERC20-transfer}.
-     */
-    function decimals() external virtual view returns (uint256);
-
+/**
+ * @notice RToken interface a ERC20 interface and one can mint new tokens by
+ *      trasfering underlying token into the contract, configure _hats_ for
+ *      addresses and pay earned interest in new _rTokens_.
+ */
+interface IRToken is IERC20 {
     ////////////////////////////////////////////////////////////////////////////
     // For external transactions
     ////////////////////////////////////////////////////////////////////////////
     /**
      * @notice Sender supplies assets into the market and receives rTokens in exchange
      * @param mintAmount The amount of the underlying asset to supply
-     * @return bool true=success, otherwise a failure
+     * @return true=success, otherwise a failure
      */
     function mint(uint256 mintAmount) external virtual returns (bool);
 
@@ -51,16 +24,19 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      * @notice Sender supplies assets into the market and receives rTokens in exchange
      *         Also setting the a selected hat for the account.
      * @param hatID The id of the selected Hat
-     * @return bool true=success, otherwise a failure
+     * @return true=success, otherwise a failure
      */
-    function mintWithSelectedHat(uint256 mintAmount, uint256 hatID) external virtual returns (bool);
+    function mintWithSelectedHat(uint256 mintAmount, uint256 hatID)
+        external
+        virtual
+        returns (bool);
 
     /**
      * @notice Sender supplies assets into the market and receives rTokens in exchange
      *         Also setting the a new hat for the account.
      * @param mintAmount The amount of the underlying asset to supply
      * @param proportions Relative proportions of benefits received by the recipients
-     * @return bool true=success, otherwise a failure
+     * @return true=success, otherwise a failure
      */
     function mintWithNewHat(
         uint256 mintAmount,
@@ -69,73 +45,36 @@ abstract contract IRToken is RTokenStructs, IERC20 {
     ) external virtual returns (bool);
 
     /**
-     * @notice Moves all tokens from the caller's account to `dst`.
-     * @param dst The destination address.
-     * @return bool true=success, otherwise a failure
-     */
-    function transferAll(address dst) external virtual returns (bool);
-
-    /**
-     * @notice Moves all tokens from `src` account to `dst`.
-     * @param src The source address which approved the msg.sender to spend
-     * @param dst The destination address.
-     * @return bool true=success, otherwise a failure
-     */
-    function transferAllFrom(address src, address dst) external virtual returns (bool);
-
-    /**
      * @notice Sender redeems rTokens in exchange for the underlying asset
      * @param redeemTokens The number of rTokens to redeem into underlying
-     * @return bool true=success, otherwise a failure
+     * @return true=success, otherwise a failure
      */
     function redeem(uint256 redeemTokens) external virtual returns (bool);
-
-    /**
-     * @notice Sender redeems all rTokens in exchange for the underlying asset
-     * @return bool true=success, otherwise a failure
-     */
-    function redeemAll() external virtual returns (bool);
-
-    /**
-     * @notice Sender redeems rTokens in exchange for the underlying asset then immediately transfer them to a differen user
-     * @param redeemTo Destination address to send the redeemed tokens to
-     * @param redeemTokens The number of rTokens to redeem into underlying
-     * @return bool true=success, otherwise a failure
-     */
-    function redeemAndTransfer(address redeemTo, uint256 redeemTokens) external virtual returns (bool);
-
-    /**
-     * @notice Sender redeems all rTokens in exchange for the underlying asset then immediately transfer them to a differen user
-     * @param redeemTo Destination address to send the redeemed tokens to
-     * @return bool true=success, otherwise a failure
-     */
-    function redeemAndTransferAll(address redeemTo) external virtual returns (bool);
 
     /**
      * @notice Create a new Hat
      * @param recipients List of beneficial recipients
      * @param proportions Relative proportions of benefits received by the recipients
      * @param doChangeHat Should the hat of the `msg.sender` be switched to the new one
-     * @return uint256 ID of the newly creatd Hat.
+     * @return hatID of the newly creatd Hat.
      */
-
     function createHat(
         address[] calldata recipients,
         uint32[] calldata proportions,
         bool doChangeHat
-    ) external virtual returns (uint256);
+    ) external virtual returns (uint256 hatID);
 
     /**
      * @notice Change the hat for `msg.sender`
      * @param hatID The id of the Hat
-     * @return bool true=success, otherwise a failure
+     * @return true=success therwise a failure
      */
     function changeHat(uint256 hatID) external virtual returns (bool);
 
     /**
      * @notice pay interest to the owner
      * @param owner Account owner address
-     * @return bool true=success, otherwise a failure
+     * @return true=success, otherwise a failure
      *
      * Anyone can trigger the interest distribution on behalf of the recipient,
      * due to the fact that the recipient can be a contract code that has not
@@ -152,7 +91,7 @@ abstract contract IRToken is RTokenStructs, IERC20 {
     /**
      * @notice Get the maximum hatID in the system
      */
-    function getMaximumHatID() external virtual view returns (uint256 hatID);
+    function getMaximumHatID() external view virtual returns (uint256 hatID);
 
     /**
      * @notice Get the hatID of the owner and the hat structure
@@ -163,8 +102,8 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      */
     function getHatByAddress(address owner)
         external
-        virtual
         view
+        virtual
         returns (
             uint256 hatID,
             address[] memory recipients,
@@ -179,8 +118,8 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      */
     function getHatByID(uint256 hatID)
         external
-        virtual
         view
+        virtual
         returns (address[] memory recipients, uint32[] memory proportions);
 
     /**
@@ -190,8 +129,8 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      */
     function receivedSavingsOf(address owner)
         external
-        virtual
         view
+        virtual
         returns (uint256 amount);
 
     /**
@@ -202,8 +141,8 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      */
     function receivedLoanOf(address owner)
         external
-        virtual
         view
+        virtual
         returns (uint256 amount);
 
     /**
@@ -214,30 +153,9 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      */
     function interestPayableOf(address owner)
         external
-        virtual
         view
+        virtual
         returns (uint256 amount);
-
-    /// @notice Get current saving strategy
-    function ias() external virtual returns (IAllocationStrategy);
-
-    /// @notice Saving asset original to internal amount conversion rate.
-    ///
-    /// @dev About the saving asset original to internal conversaioon rate:
-    ///
-    ///      - It has 18 decimals
-    ///      - It starts with value 1
-    ///      - Each strategy switching results a new conversion rate
-    ///
-    /// NOTE:
-    ///
-    /// 1. The reason there is an exchange rate is that, each time the
-    ///    allocation strategy is switched, the unit of the original amount gets
-    ///    changed, it is impossible to change all the internal savings
-    ///    accounting entries for all accounts, hence instead a conversaion rate
-    ///    is used to simplify the process.
-    /// 2. internalSavings == originalSavings * savingAssetConversionRate
-    function savingAssetConversionRate() external virtual returns (uint256);
 
     ////////////////////////////////////////////////////////////////////////////
     // statistics views
@@ -246,7 +164,7 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      * @notice Get the current saving strategy contract
      * @return Saving strategy address
      */
-    function getCurrentSavingStrategy() external virtual view returns (address);
+    function getCurrentSavingStrategy() external view virtual returns (address);
 
     /**
     * @notice Get saving asset balance for specific saving strategy
@@ -255,15 +173,15 @@ abstract contract IRToken is RTokenStructs, IERC20 {
     */
     function getSavingAssetBalance()
         external
-        virtual
         view
+        virtual
         returns (uint256 rAmount, uint256 sOriginalAmount);
 
     /**
     * @notice Get global stats
     * @return global stats
     */
-    function getGlobalStats() external virtual view returns (GlobalStats memory);
+    function getGlobalStats() external view virtual returns (RTokenStructs.GlobalStats memory);
 
     /**
     * @notice Get account stats
@@ -272,9 +190,9 @@ abstract contract IRToken is RTokenStructs, IERC20 {
     */
     function getAccountStats(address owner)
         external
-        virtual
         view
-        returns (AccountStatsView memory);
+        virtual
+        returns (RTokenStructs.AccountStatsView memory);
 
     /**
     * @notice Get hat stats
@@ -283,9 +201,9 @@ abstract contract IRToken is RTokenStructs, IERC20 {
     */
     function getHatStats(uint256 hatID)
         external
-        virtual
         view
-        returns (HatStatsView memory);
+        virtual
+        returns (RTokenStructs.HatStatsView memory);
 
     ////////////////////////////////////////////////////////////////////////////
     // Events
@@ -299,7 +217,8 @@ abstract contract IRToken is RTokenStructs, IERC20 {
         uint256 indexed hatId,
         bool isDistribution,
         uint256 redeemableAmount,
-        uint256 internalSavingsAmount);
+        uint256 internalSavingsAmount
+    );
 
     /**
      * @notice Event emitted when interest paid
@@ -315,4 +234,6 @@ abstract contract IRToken is RTokenStructs, IERC20 {
      * @notice Hat is changed for the account
      */
     event HatChanged(address indexed account, uint256 indexed oldHatID, uint256 indexed newHatID);
+
+    event AllocationStrategyChanged(address strategy, uint256 conversionRate);
 }

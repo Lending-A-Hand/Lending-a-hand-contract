@@ -1,73 +1,71 @@
-pragma solidity 0.8.1;
+pragma solidity 0.8.6;
 
 /**
  * @notice RToken storage structures
  */
-contract RTokenStructs {
+abstract contract RTokenStructs {
 
     /**
      * @notice Global stats
      */
-        /// @notice Total redeemable tokens supply
-        /// @notice Total saving assets in redeemable amount
-
     struct GlobalStats {
+        /// @notice Total redeemable tokens supply
         uint256 totalSupply;
+        /// @notice Total saving assets in redeemable amount
         uint256 totalSavingsAmount;
     }
 
     /**
      * @notice Account stats stored
      */
-        /// @notice Current hat ID
-        /// @notice Current redeemable amount
-        /// @notice Interest portion of the rAmount
-        /// @notice Current loaned debt amount
-        /// @notice Current internal savings amount
-        /// @notice Interest payable
-        /// @notice Cumulative interest generated for the account
-        /// @notice Loans lent to the recipients
-
     struct AccountStatsView {
+        /// @notice Current hat ID
         uint256 hatID;
+        /// @notice Current redeemable amount
         uint256 rAmount;
+        /// @notice Interest portion of the rAmount
         uint256 rInterest;
+        /// @notice Current loaned debt amount
         uint256 lDebt;
+        /// @notice Current internal savings amount
         uint256 sInternalAmount;
+        /// @notice Interest payable
         uint256 rInterestPayable;
+        /// @notice Cumulative interest generated for the account
         uint256 cumulativeInterest;
+        /// @notice Loans lent to the recipients
         uint256 lRecipientsSum;
     }
 
     /**
      * @notice Account stats stored
      */
-        /// @notice Cumulative interest generated for the account
     struct AccountStatsStored {
+        /// @notice Cumulative interest generated for the account
         uint256 cumulativeInterest;
     }
 
     /**
      * @notice Hat stats view
      */
-        /// @notice Number of addresses has the hat
-        /// @notice Total net loans distributed through the hat
-        /// @notice Total net savings distributed through the hat
     struct HatStatsView {
+        /// @notice Number of addresses has the hat
         uint256 useCount;
+        /// @notice Total net loans distributed through the hat
         uint256 totalLoans;
+        /// @notice Total net savings distributed through the hat
         uint256 totalSavings;
     }
 
     /**
      * @notice Hat stats stored
      */
-        /// @notice Number of addresses has the hat
-        /// @notice Total net loans distributed through the hat
-        /// @notice Total net savings distributed through the hat
     struct HatStatsStored {
+        /// @notice Number of addresses has the hat
         uint256 useCount;
+        /// @notice Total net loans distributed through the hat
         uint256 totalLoans;
+        /// @notice Total net savings distributed through the hat
         uint256 totalInternalSavings;
     }
 
@@ -85,23 +83,23 @@ contract RTokenStructs {
     }
 
     /// @dev Account structure
+    struct Account {
         /// @notice Current selected hat ID of the account
+        uint256 hatID;
+        /// @notice Current balance of the account (non realtime)
+        uint256 rAmount;
         /// @notice Interest rate portion of the rAmount
+        uint256 rInterest;
         /// @notice Debt in redeemable amount lent to recipients
         //          In case of self-hat, external debt is optimized to not to
         //          be stored in lRecipients
+        mapping(address => uint256) lRecipients;
         /// @notice Received loan.
         ///         Debt in redeemable amount owed to the lenders distributed
         ///         through one or more hats.
+        uint256 lDebt;
         /// @notice Savings internal accounting amount.
         ///         Debt is sold to buy savings
-
-    struct Account {
-        uint256 hatID;
-        uint256 rAmount;
-        uint256 rInterest;
-        mapping(address => uint256) lRecipients;
-        uint256 lDebt;
         uint256 sInternalAmount;
     }
 
@@ -130,4 +128,3 @@ contract RTokenStructs {
      *
      */
 }
-
