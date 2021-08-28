@@ -7,15 +7,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CharityNFT is ERC721, Ownable{
     
-    enum nftStatus { pending, accept}
-    
-    constructor (string memory name_, string memory symbol_) ERC721(name_, symbol_) {}
-    
+    enum nftStatus { pending, accept} 
+
     mapping(uint256 => string)  private _tokenURIs;
     mapping(uint256 => nftStatus) private _tokenStatus;
     
     event TokenBurn(uint256 tokenId);
     
+    constructor (string memory name_, string memory symbol_) ERC721(name_, symbol_) {}
     /***********************************|
     |           Mint function           |
     |__________________________________*/
@@ -41,6 +40,10 @@ contract CharityNFT is ERC721, Ownable{
     
     function accept(uint256 tokenId) external {
         _tokenStatus[tokenId] = nftStatus.accept;
+    }
+
+    function transfer(uint256 tokenId, address receipient) external {
+        _transfer(msg.sender, receipient, tokenId);
     }
 
     /***********************************|
