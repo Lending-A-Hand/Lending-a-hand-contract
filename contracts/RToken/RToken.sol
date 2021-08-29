@@ -5,6 +5,7 @@ import {ReentrancyGuard} from "./ReentrancyGuard.sol";
 import {RTokenStructs} from "./RTokenStructs.sol";
 import {RTokenStorage} from "./RTokenStorage.sol";
 import {IERC20, IRToken} from "./IRToken.sol";
+import {NothingAllocationStrategy} from "./NothingAllocationStrategy.sol";
 import {IAllocationStrategy} from "./IAllocationStrategy.sol";
 
 /**
@@ -27,7 +28,6 @@ contract RToken is
      * @notice Create rToken linked with cToken at `cToken_`
      */
     function initialize(
-        IAllocationStrategy _allocationStrategy,
         string memory _name,
         string memory _symbol,
         uint256 _decimals
@@ -38,7 +38,8 @@ contract RToken is
         symbol = _symbol;
         decimals = _decimals;
         savingAssetConversionRate = INITIAL_SAVING_ASSET_CONVERSION_RATE;
-        allocationStrategy = _allocationStrategy;
+        address nas = address(new NothingAllocationStrategy());
+        allocationStrategy = IAllocationStrategy(nas);
         token = IERC20(allocationStrategy.underlying());
 
         // special hat aka. zero hat : hatID = 0
@@ -47,7 +48,7 @@ contract RToken is
         // everyone is using it by default
         hatStats[0].useCount = MAX_UINT256;
 
-        emit AllocationStrategyChanged(address(_allocationStrategy), savingAssetConversionRate);
+        emit AllocationStrategyChanged(nas, savingAssetConversionRate);
     }
 
     //
@@ -488,7 +489,7 @@ contract RToken is
 
         // lRecipients adjustments
         uint256 sInternalEstimated = estimateAndRecollectLoans(src, tokens);
-        distributeLoans(dst, tokens, sInternalEstimated);
+        _distributeLoans(dst, tokens, sInternalEstimated);
 
         // update token balances
         accounts[src].rAmount = srcTokensNew;
@@ -532,7 +533,7 @@ contract RToken is
 
         // distribute saving assets as loans to recipients
         uint256 sInternalCreated = sOriginalToSInternal(sOriginalCreated);
-        distributeLoans(msg.sender, mintAmount, sInternalCreated);
+        _distributeLoans(msg.sender, mintAmount, sInternalCreated);
 
         emit Transfer(address(0), msg.sender, mintAmount);
     }
@@ -551,7 +552,7 @@ contract RToken is
             "Not enough balance to redeem"
         );
 
-        redeemAndRecollectLoans(msg.sender, redeemAmount);
+        _redeemAndRecollectLoans(msg.sender, redeemAmount);
 
         // update Account r balances and global statistics
         account.rAmount -= redeemAmount;
@@ -621,7 +622,7 @@ contract RToken is
         if (account.rAmount > 0) {
             uint256 sInternalEstimated = estimateAndRecollectLoans(owner, account.rAmount);
             account.hatID = hatID;
-            distributeLoans(owner, account.rAmount, sInternalEstimated);
+            _distributeLoans(owner, account.rAmount, sInternalEstimated);
         } else {
             account.hatID = hatID;
         }
@@ -657,7 +658,7 @@ contract RToken is
      * @param rAmount rToken amount being loaned to the recipients
      * @param sInternalAmount Amount of saving assets (internal amount) being given to the recipients
      */
-    function distributeLoans(
+    function _distributeLoans(
         address owner,
         uint256 rAmount,
         uint256 sInternalAmount
@@ -717,7 +718,7 @@ contract RToken is
         // accrue interest so estimate is up to date
         require(allocationStrategy.accrueInterest(), "accrueInterest failed");
         sInternalEstimated = rToSInternal(rAmount);
-        recollectLoans(owner, rAmount);
+        _recollectLoans(owner, rAmount);
     }
 
     /**
@@ -727,12 +728,12 @@ contract RToken is
      * @param rAmount rToken amount neeeds to be recollected from the recipients
      *                by redeeming equivalent value of the saving assets
      */
-    function redeemAndRecollectLoans(address owner, uint256 rAmount)
+    function _redeemAndRecollectLoans(address owner, uint256 rAmount)
         internal
     {
         uint256 sOriginalBurned = allocationStrategy.redeemUnderlying(rAmount);
         sOriginalToSInternal(sOriginalBurned);
-        recollectLoans(owner, rAmount);
+        _recollectLoans(owner, rAmount);
 
         // update global stats
         // TODO: figure out when will the second case heppen
@@ -748,7 +749,7 @@ contract RToken is
      * @param owner   Owner address
      * @param rAmount rToken amount of debt to be collected from the recipients
      */
-    function recollectLoans(
+    function _recollectLoans(
         address owner,
         uint256 rAmount
     ) internal {
@@ -798,7 +799,7 @@ contract RToken is
                 // savings leftover adjustments
                 sInternalLeft = gentleSub(sInternalLeft, sInternalAmountRecipient);
 
-                adjustRInterest(recipientAccount);
+                _adjustRInterest(recipientAccount);
 
                 _updateLoanStats(owner, hat.recipients[i], account.hatID, false, lDebtRecipient, sInternalAmountRecipient);
             }
@@ -811,7 +812,7 @@ contract RToken is
             // collect savings
             account.sInternalAmount = gentleSub(account.sInternalAmount, sInternalToCollect);
 
-            adjustRInterest(account);
+            _adjustRInterest(account);
 
             _updateLoanStats(owner, owner, account.hatID, false, debtToCollect, sInternalToCollect);
         }
@@ -820,7 +821,7 @@ contract RToken is
         if (rAmount > debtToCollect) {
             sInternalToCollect = rToSInternal(rAmount - debtToCollect);
             account.sInternalAmount = gentleSub(account.sInternalAmount, sInternalToCollect);
-            adjustRInterest(account);
+            _adjustRInterest(account);
         }
     }
 
@@ -939,7 +940,7 @@ contract RToken is
 
     // @dev adjust rInterest value
     //      if savings are transferred, rInterest should be also adjusted
-    function adjustRInterest(Account storage account) private {
+    function _adjustRInterest(Account storage account) private {
         uint256 rGross = sInternalToR(account.sInternalAmount);
         if (account.rInterest > rGross - account.lDebt) {
             account.rInterest = rGross - account.lDebt;
