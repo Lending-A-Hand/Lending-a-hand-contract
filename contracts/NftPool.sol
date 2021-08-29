@@ -175,12 +175,14 @@ contract NftPool is Ownable, RTokenStructs {
             if (mockCumulativeInterest[msg.sender] < poolThreshold[i])
               break;
             else {
+                mockCumulativeInterest[msg.sender] = 0;
                 uint256 id = _drawNftFromPool(poolIndex[receipient]);
                 charityNftContract.transfer(id, msg.sender);
                 poolToken[poolIndex[receipient]].remove(id);
                 _nonce += magicNumber;
                 emit TokenDistributed(msg.sender, id);
-                rankByPool[msg.sender][poolIndex[receipient]]++;
+                rankByPool[msg.sender][poolIndex[receipient]] = 0;
+                break;
             }
         }
     }
