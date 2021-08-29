@@ -233,10 +233,12 @@ contract NftPool is Ownable, RTokenStructs {
         return (poolStat[poolIndex[receipient]].threshold, accuAmount);
     }
     
-    function getPoolToken(address receipient) external {
-        delete showPoolNfts;
+    function getPoolToken(address receipient) public view returns (uint256[] memory) {
+        uint256[] memory arr;
         for (uint256 i = 0; i < poolToken[poolIndex[receipient]].length(); i++) {
-            showPoolNfts.push(poolToken[poolIndex[receipient]].at(i));
+            arr[i] = poolToken[poolIndex[receipient]].at(i);
         }
+
+        return arr;
     }
 }
