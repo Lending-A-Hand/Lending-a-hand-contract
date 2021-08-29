@@ -50,6 +50,8 @@ contract NftPool is Ownable, RTokenStructs {
     // pool => tokenId
     mapping(address => bool) public registered;
 
+    mapping(address => uint256) public mockCumulativeInterest;
+
     uint256 private _nonce;
     uint256 private magicNumber;
 
@@ -106,6 +108,10 @@ contract NftPool is Ownable, RTokenStructs {
             underlyingAsset,
             threshold
         );
+    }
+
+    function updateCumulative(address addr, uint256 amount) external {
+        mockCumulativeInterest[addr] = amount;
     }
 
     function poolMintToken(address receipient, string memory uri) external onlyOwner {
@@ -165,15 +171,32 @@ contract NftPool is Ownable, RTokenStructs {
         uint256[] memory poolThreshold = poolStat[poolIndex[receipient]].threshold;
         require(rank < poolThreshold.length, "NftPool: nothing to claim");
         for (uint256 i = rank; i < poolThreshold.length; i++) {
-            if (accumulated + amount < poolThreshold[i])
+            // if (accumulated + amount < poolThreshold[i])
+            if (mockCumulativeInterest[msg.sender] < poolThreshold[i])
               break;
             else {
                 uint256 id = _drawNftFromPool(poolIndex[receipient]);
                 charityNftContract.transfer(id, msg.sender);
                 poolToken[poolIndex[receipient]].remove(id);
-                _nonce+=magicNumber;
+                _nonce += magicNumber;
                 emit TokenDistributed(msg.sender, id);
                 rankByPool[msg.sender][poolIndex[receipient]]++;
+            }
+        }
+    }
+
+    function canClaim(address from, address receipient) public view returns (bool) {
+        uint256 rank = rankByPool[msg.sender][poolIndex[receipient]];
+        uint256[] memory poolThreshold = poolStat[poolIndex[receipient]].threshold;
+        if (rank >= poolThreshold.length)
+            return false;
+
+        for (uint256 i = rank; i < poolThreshold.length; i++) {
+            // if (accumulated + amount < poolThreshold[i])
+            if (mockCumulativeInterest[msg.sender] < poolThreshold[i])
+              break;
+            else {
+                return true;
             }
         }
     }
