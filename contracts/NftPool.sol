@@ -234,7 +234,7 @@ contract NftPool is Ownable, RTokenStructs {
     }
     
     function getPoolToken(address receipient) public view returns (uint256[] memory) {
-        uint256[] memory arr;
+        uint256[] memory arr = new uint256[](poolToken[poolIndex[receipient]].length());
         for (uint256 i = 0; i < poolToken[poolIndex[receipient]].length(); i++) {
             arr[i] = poolToken[poolIndex[receipient]].at(i);
         }
