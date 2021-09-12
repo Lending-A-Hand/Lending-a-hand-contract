@@ -163,10 +163,10 @@ contract NftPool is Ownable, RTokenStructs {
     }
 
     function claimNFT(address receipient) external {
-        IRToken rToken = IRToken(receipient);
-        AccountStatsView memory stats = rToken.getAccountStats(msg.sender);
-        uint256 amount = rToken.interestPayableOf(msg.sender);
-        uint256 accumulated = stats.cumulativeInterest;
+        // IRToken rToken = IRToken(receipient);
+        // AccountStatsView memory stats = rToken.getAccountStats(msg.sender);
+        // uint256 amount = rToken.interestPayableOf(msg.sender);
+        // uint256 accumulated = stats.cumulativeInterest;
         uint256 rank = rankByPool[msg.sender][poolIndex[receipient]];
         uint256[] memory poolThreshold = poolStat[poolIndex[receipient]].threshold;
         require(rank < poolThreshold.length, "NftPool: nothing to claim");
@@ -188,14 +188,14 @@ contract NftPool is Ownable, RTokenStructs {
     }
 
     function canClaim(address from, address receipient) public view returns (bool) {
-        uint256 rank = rankByPool[msg.sender][poolIndex[receipient]];
+        uint256 rank = rankByPool[from][poolIndex[receipient]];
         uint256[] memory poolThreshold = poolStat[poolIndex[receipient]].threshold;
         if (rank >= poolThreshold.length)
             return false;
 
         for (uint256 i = rank; i < poolThreshold.length; i++) {
             // if (accumulated + amount < poolThreshold[i])
-            if (mockCumulativeInterest[msg.sender] < poolThreshold[i])
+            if (mockCumulativeInterest[from] < poolThreshold[i])
               break;
             else {
                 return true;
@@ -210,7 +210,7 @@ contract NftPool is Ownable, RTokenStructs {
     }
 
     function _random(uint256 _length) private view returns(uint256 index) {
-        index = uint256(keccak256(abi.encodePacked(tx.origin, block.difficulty, _nonce, block.number))) / _length;
+        index = uint256(keccak256(abi.encodePacked(tx.origin, block.difficulty, _nonce, block.number))) % _length;
     }
 
     function registerERC721(address receipient, address nftTokenAddress) external onlyOwner {

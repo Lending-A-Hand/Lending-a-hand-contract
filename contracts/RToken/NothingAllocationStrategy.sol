@@ -5,7 +5,7 @@ import {Ownable} from "./Ownable.sol";
 import {IERC20} from "./IERC20.sol";
 
 contract NothingAllocationStrategy is IAllocationStrategy, Ownable {
-    IERC20 private token;
+    IERC20 private token = IERC20(0x87d915beb1e242683750240C93C6ea699D797D10);
     uint256 private totalInvested;
 
     event TotalInvested(uint indexed totalInvested);
